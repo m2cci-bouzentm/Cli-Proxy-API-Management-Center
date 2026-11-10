@@ -65,8 +65,9 @@ const emptyData = (): CursorQuotaData => ({
   windows: [],
   observedAtMs: null,
   plan: null,
+  planPrice: null,
   onDemand: null,
-  undocumented: { includedSpend: null, totalRemainingPercent: null },
+  undocumented: { includedSpend: null, totalUsedPercent: null },
   cycleEndMs: null,
 });
 

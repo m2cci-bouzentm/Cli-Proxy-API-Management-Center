@@ -92,10 +92,17 @@
   padding: 6px 4px;
 }
 
-/* Rows with values that a provider's own dashboard does not show. */
-.quotaUndocumented.quotaRowHeader,
-.quotaUndocumented.quotaRowHeader * {
+/* Values that a provider sends but does not document or show on its own dashboard. */
+.quotaUndocumented {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--warning-border);
   color: var(--warning-text);
+
+  .quotaMessage,
+  .quotaRowHeader * {
+    color: var(--warning-text);
+  }
 }
 
 /* ---------- 水位条（QuotaMeter）----------

@@ -334,6 +334,8 @@ export interface DevinQuotaState extends DevinQuotaData {
 export interface CursorQuotaWindow {
   id: 'auto' | 'api';
   label?: string;
+  /** The Cursor dashboard shows the used percent; the timeline and sorting use the remaining percent. */
+  usedPercent: number | null;
   remainingPercent: number | null;
   resetAtMs: number | null;
   periodHours: number;
@@ -348,7 +350,7 @@ export interface CursorSpend {
 /** Values that the Cursor usage service sends but the Cursor dashboard does not show. */
 export interface CursorUndocumentedUsage {
   includedSpend: CursorSpend | null;
-  totalRemainingPercent: number | null;
+  totalUsedPercent: number | null;
 }
 
 /** Only plan usage fields from the Cursor dashboard service, never the exchanged access token. */
@@ -356,6 +358,7 @@ export interface CursorQuotaData {
   windows: CursorQuotaWindow[];
   observedAtMs: number | null;
   plan: string | null;
+  planPrice: string | null;
   onDemand: CursorSpend | null;
   undocumented: CursorUndocumentedUsage;
   cycleEndMs: number | null;

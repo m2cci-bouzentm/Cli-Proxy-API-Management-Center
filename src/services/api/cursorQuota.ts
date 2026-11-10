@@ -27,11 +27,13 @@ const parseNumber = (value: unknown): number | null => {
   return typeof parsed === 'number' && Number.isFinite(parsed) ? parsed : null;
 };
 
-const parseRemainingPercent = (usedPercent: unknown): number | null => {
-  const used = parseNumber(usedPercent);
-  if (used === null) return null;
-  return Number((100 - Math.min(100, Math.max(0, used))).toFixed(1));
+const parseUsedPercent = (value: unknown): number | null => {
+  const used = parseNumber(value);
+  return used === null ? null : Math.min(100, Math.max(0, used));
 };
+
+const readText = (value: unknown): string | null =>
+  typeof value === 'string' && value.trim() ? value.trim() : null;
 
 const parseSpend = (used: unknown, limit: unknown): CursorSpend | null => {
   const usedCents = parseNumber(used);
@@ -57,13 +59,17 @@ export function parseCursorQuotaPayload(
   const cycleEndMs = parseNumber(usage.billingCycleEnd);
   const periodHours =
     cycleStartMs !== null && cycleEndMs !== null ? (cycleEndMs - cycleStartMs) / 3_600_000 : 0;
-  const window = (id: CursorQuotaWindow['id'], usedPercent: unknown): CursorQuotaWindow => ({
-    id,
-    remainingPercent: parseRemainingPercent(usedPercent),
-    resetAtMs: cycleEndMs,
-    periodHours,
-  });
-  const planName = asRecord(asRecord(parseJson(planPayload)).planInfo).planName;
+  const window = (id: CursorQuotaWindow['id'], value: unknown): CursorQuotaWindow => {
+    const usedPercent = parseUsedPercent(value);
+    return {
+      id,
+      usedPercent,
+      remainingPercent: usedPercent === null ? null : Number((100 - usedPercent).toFixed(1)),
+      resetAtMs: cycleEndMs,
+      periodHours,
+    };
+  };
+  const planInfo = asRecord(asRecord(parseJson(planPayload)).planInfo);
   const individualLimit = parseNumber(spendLimit.individualLimit);
   const individualRemaining = parseNumber(spendLimit.individualRemaining);
 
@@ -73,14 +79,15 @@ export function parseCursorQuotaPayload(
       window('api', planUsage.apiPercentUsed),
     ],
     observedAtMs,
-    plan: typeof planName === 'string' && planName.trim() ? planName.trim() : null,
+    plan: readText(planInfo.planName),
+    planPrice: readText(planInfo.price),
     onDemand:
       individualLimit !== null && individualRemaining !== null
         ? parseSpend(individualLimit - individualRemaining, individualLimit)
         : null,
     undocumented: {
       includedSpend: parseSpend(planUsage.includedSpend, planUsage.limit),
-      totalRemainingPercent: parseRemainingPercent(planUsage.totalPercentUsed),
+      totalUsedPercent: parseUsedPercent(planUsage.totalPercentUsed),
     },
     cycleEndMs,
   };
