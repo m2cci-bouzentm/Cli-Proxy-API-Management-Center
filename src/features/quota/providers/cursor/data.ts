@@ -65,7 +65,6 @@ const emptyData = (): CursorQuotaData => ({
   windows: [],
   observedAtMs: null,
   plan: null,
-  included: null,
   onDemand: null,
   cycleEndMs: null,
 });

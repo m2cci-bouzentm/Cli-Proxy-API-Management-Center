@@ -571,12 +571,10 @@
     "plan_business_premium": "Business Premium"
   },
   "cursor_quota": {
-    "total": "Total usage",
-    "auto": "Auto + Composer",
-    "api": "API models",
+    "auto": "Cursor Models (Composer, Cursor Grok)",
+    "api": "Other Models",
     "plan_label": "Plan",
-    "included": "Included spend",
-    "on_demand": "On-demand spend",
+    "on_demand": "On-Demand",
     "unavailable": "Unavailable",
     "reset_unknown": "Reset time unavailable",
     "missing_auth_index": "Auth file missing auth_index",

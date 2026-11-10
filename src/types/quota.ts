@@ -332,7 +332,7 @@ export interface DevinQuotaState extends DevinQuotaData {
 }
 
 export interface CursorQuotaWindow {
-  id: 'total' | 'auto' | 'api';
+  id: 'auto' | 'api';
   label?: string;
   remainingPercent: number | null;
   resetAtMs: number | null;
@@ -350,7 +350,6 @@ export interface CursorQuotaData {
   windows: CursorQuotaWindow[];
   observedAtMs: number | null;
   plan: string | null;
-  included: CursorSpend | null;
   onDemand: CursorSpend | null;
   cycleEndMs: number | null;
 }

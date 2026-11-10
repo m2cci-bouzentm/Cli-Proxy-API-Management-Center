@@ -17,14 +17,9 @@ export function CursorQuotaBody({ quota, classes }: QuotaBodyProps<CursorQuotaSt
   const now = useNow();
   const locale = i18n.resolvedLanguage;
   const urgentRow = pickUrgentRowId(collectQuotaRowInstants('cursor', quota), now);
-  const spends = [
-    { key: 'included', spend: quota.included },
-    { key: 'on_demand', spend: quota.onDemand },
-  ].filter((item): item is { key: string; spend: CursorSpend } => item.spend !== null);
-
   return (
     <>
-      {(quota.plan || spends.length > 0) && (
+      {(quota.plan || quota.onDemand) && (
         <div className={classes.codexPlan}>
           {quota.plan && (
             <span className={classes.codexPlanItem}>
@@ -32,12 +27,12 @@ export function CursorQuotaBody({ quota, classes }: QuotaBodyProps<CursorQuotaSt
               <span className={classes.codexPlanValue}>{quota.plan}</span>
             </span>
           )}
-          {spends.map(({ key, spend }) => (
-            <span key={key} className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>{t(`cursor_quota.${key}`)}</span>
-              <span className={classes.codexPlanValue}>{formatSpend(spend, locale)}</span>
+          {quota.onDemand && (
+            <span className={classes.codexPlanItem}>
+              <span className={classes.codexPlanLabel}>{t('cursor_quota.on_demand')}</span>
+              <span className={classes.codexPlanValue}>{formatSpend(quota.onDemand, locale)}</span>
             </span>
-          ))}
+          )}
         </div>
       )}
       {quota.windows.map((window, index) => {

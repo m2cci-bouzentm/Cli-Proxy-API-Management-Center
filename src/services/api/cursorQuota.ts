@@ -69,13 +69,11 @@ export function parseCursorQuotaPayload(
 
   return {
     windows: [
-      window('total', planUsage.totalPercentUsed),
       window('auto', planUsage.autoPercentUsed),
       window('api', planUsage.apiPercentUsed),
     ],
     observedAtMs,
     plan: typeof planName === 'string' && planName.trim() ? planName.trim() : null,
-    included: parseSpend(planUsage.includedSpend, planUsage.limit),
     onDemand:
       individualLimit !== null && individualRemaining !== null
         ? parseSpend(individualLimit - individualRemaining, individualLimit)
