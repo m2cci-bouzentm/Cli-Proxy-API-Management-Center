@@ -92,7 +92,9 @@
   padding: 6px 4px;
 }
 
-.quotaUndocumented {
+/* Rows with values that a provider's own dashboard does not show. */
+.quotaRowHeader.quotaUndocumented,
+.quotaRowHeader.quotaUndocumented * {
   color: var(--warning-text);
 }
 
