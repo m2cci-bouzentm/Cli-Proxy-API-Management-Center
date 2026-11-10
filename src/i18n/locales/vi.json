@@ -2329,6 +2329,8 @@
     "api": "Other Models",
     "plan_label": "Plan",
     "on_demand": "On-Demand",
+    "total_undocumented": "Total remaining (not on the Cursor dashboard)",
+    "included_undocumented": "Included spend (not on the Cursor dashboard)",
     "unavailable": "Unavailable",
     "reset_unknown": "Reset time unavailable",
     "missing_auth_index": "Auth file missing auth_index",

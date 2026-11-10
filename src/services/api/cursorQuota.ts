@@ -78,6 +78,10 @@ export function parseCursorQuotaPayload(
       individualLimit !== null && individualRemaining !== null
         ? parseSpend(individualLimit - individualRemaining, individualLimit)
         : null,
+    undocumented: {
+      includedSpend: parseSpend(planUsage.includedSpend, planUsage.limit),
+      totalRemainingPercent: parseRemainingPercent(planUsage.totalPercentUsed),
+    },
     cycleEndMs,
   };
 }

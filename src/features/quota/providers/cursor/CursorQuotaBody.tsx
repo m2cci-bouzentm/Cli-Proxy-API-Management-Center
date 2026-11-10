@@ -71,6 +71,20 @@ export function CursorQuotaBody({ quota, classes }: QuotaBodyProps<CursorQuotaSt
           </div>
         );
       })}
+      {quota.undocumented.totalRemainingPercent !== null && (
+        <div className={`${classes.quotaRowHeader} ${classes.quotaUndocumented}`}>
+          <span className={classes.quotaModel}>{t('cursor_quota.total_undocumented')}</span>
+          <span className={classes.quotaPercent}>{quota.undocumented.totalRemainingPercent}%</span>
+        </div>
+      )}
+      {quota.undocumented.includedSpend && (
+        <div className={`${classes.quotaRowHeader} ${classes.quotaUndocumented}`}>
+          <span className={classes.quotaModel}>{t('cursor_quota.included_undocumented')}</span>
+          <span className={classes.quotaPercent}>
+            {formatSpend(quota.undocumented.includedSpend, locale)}
+          </span>
+        </div>
+      )}
     </>
   );
 }

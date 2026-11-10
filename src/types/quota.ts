@@ -345,12 +345,19 @@ export interface CursorSpend {
   limitCents: number;
 }
 
+/** Values that the Cursor usage service sends but the Cursor dashboard does not show. */
+export interface CursorUndocumentedUsage {
+  includedSpend: CursorSpend | null;
+  totalRemainingPercent: number | null;
+}
+
 /** Only plan usage fields from the Cursor dashboard service, never the exchanged access token. */
 export interface CursorQuotaData {
   windows: CursorQuotaWindow[];
   observedAtMs: number | null;
   plan: string | null;
   onDemand: CursorSpend | null;
+  undocumented: CursorUndocumentedUsage;
   cycleEndMs: number | null;
 }
 
