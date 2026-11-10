@@ -92,6 +92,19 @@
   padding: 6px 4px;
 }
 
+/* Values that a provider sends but does not document or show on its own dashboard. */
+.quotaUndocumented {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--amber-30);
+  color: var(--amber-color);
+
+  .quotaMessage,
+  .quotaRowHeader * {
+    color: var(--amber-color);
+  }
+}
+
 /* ---------- 水位条（QuotaMeter）----------
  * 轨道退居背景（8% 墨色），填充按剩余量三档着色；
  * percent === null 时宽度为 0 —— 未知不着色。 */

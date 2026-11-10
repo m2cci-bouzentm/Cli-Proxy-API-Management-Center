@@ -34,6 +34,19 @@ $quota-font-size: 11.5px;
   padding: 5px 4px;
 }
 
+/* Values that a provider sends but does not document or show on its own dashboard. */
+.quotaUndocumented {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--amber-30);
+  color: var(--amber-color);
+
+  .quotaMessage,
+  .quotaRowHeader * {
+    color: var(--amber-color);
+  }
+}
+
 button.quotaMessageAction {
   cursor: pointer;
   border: 0;
