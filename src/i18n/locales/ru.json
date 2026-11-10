@@ -350,6 +350,7 @@
     "filter_codex": "Codex",
     "filter_meta": "Muse (Meta)",
     "filter_devin": "Devin",
+    "filter_cursor": "Cursor",
     "filter_antigravity": "Antigravity",
     "filter_xai": "xAI",
     "filter_iflow": "iFlow",
@@ -568,6 +569,24 @@
     "plan_prolite": "Pro 100",
     "plan_promax": "Pro 500",
     "plan_business_premium": "Business Premium"
+  },
+  "cursor_quota": {
+    "total": "Total usage",
+    "auto": "Auto + Composer",
+    "api": "API models",
+    "plan_label": "Plan",
+    "included": "Included spend",
+    "on_demand": "On-demand spend",
+    "unavailable": "Unavailable",
+    "reset_unknown": "Reset time unavailable",
+    "missing_auth_index": "Auth file missing auth_index",
+    "stale_request": "The connection or credential changed. Please retry.",
+    "empty_data": "Cursor returned no usable quota data.",
+    "loading": "Querying Cursor quota…",
+    "idle": "Click to query Cursor quota",
+    "load_failed": "Failed to query quota: {{message}}",
+    "empty_title": "No Cursor credentials",
+    "empty_desc": "Sign in with the backend CLI (-cursor-login) or upload a Cursor credential file to query quota."
   },
   "devin_quota": {
     "daily": "Дневной лимит",

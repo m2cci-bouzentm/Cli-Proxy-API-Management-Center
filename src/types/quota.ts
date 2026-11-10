@@ -331,6 +331,36 @@ export interface DevinQuotaState extends DevinQuotaData {
   errorStatus?: number;
 }
 
+export interface CursorQuotaWindow {
+  id: 'total' | 'auto' | 'api';
+  label?: string;
+  remainingPercent: number | null;
+  resetAtMs: number | null;
+  periodHours: number;
+}
+
+/** Amounts in US cents, as Cursor reports them. */
+export interface CursorSpend {
+  usedCents: number;
+  limitCents: number;
+}
+
+/** Only plan usage fields from the Cursor dashboard service, never the exchanged access token. */
+export interface CursorQuotaData {
+  windows: CursorQuotaWindow[];
+  observedAtMs: number | null;
+  plan: string | null;
+  included: CursorSpend | null;
+  onDemand: CursorSpend | null;
+  cycleEndMs: number | null;
+}
+
+export interface CursorQuotaState extends CursorQuotaData {
+  status: 'idle' | 'loading' | 'success' | 'error';
+  error?: string;
+  errorStatus?: number;
+}
+
 /** A whitelisted quota observation from Meta's Muse key endpoint. */
 export interface MetaQuotaWindow {
   id: 'window' | 'weekly';
