@@ -1298,8 +1298,7 @@
         },
         "name_label": "Tên / mô tả (tùy chọn)",
         "name_placeholder": "Ví dụ: Laptop của Alice",
-        "name_hint": "Được lưu ngay trong trình duyệt này, riêng cho từng máy chủ. Không bao gồm trong cấu hình máy chủ. Xóa trường này để xóa tên.",
-        "name_save_error": "Không thể lưu tên vào bộ lưu trữ trình duyệt. Vui lòng kiểm tra cài đặt lưu trữ của trình duyệt."
+        "name_hint": "Được lưu trong cấu hình máy chủ cùng với các khóa. Xóa trường này để xóa tên."
       },
       "payload_rules": {
         "rule": "Quy tắc",

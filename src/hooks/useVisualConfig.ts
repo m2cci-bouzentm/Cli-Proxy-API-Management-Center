@@ -17,6 +17,7 @@ import type {
   PayloadParamValidationErrorCode,
 } from '@/types/visualConfig';
 import { DEFAULT_VISUAL_VALUES } from '@/types/visualConfig';
+import { areApiKeyNamesEqual, parseApiKeyNames } from '@/features/config/apiKeyNames';
 import { assertConfigListsUnchanged, ConfigDraftConflictError } from '@/services/api/configPatch';
 import {
   ADDITION_FIELDS,
@@ -1257,6 +1258,12 @@ function getNextDirtyFields(
     ] as Array<keyof VisualConfigValues>
   ).forEach(updateScalarDirty);
 
+  if (Object.prototype.hasOwnProperty.call(patch, 'apiKeyNames')) {
+    updateDirty(
+      'apiKeyNames',
+      areApiKeyNamesEqual(nextValues.apiKeyNames, baselineValues.apiKeyNames)
+    );
+  }
   if (Object.prototype.hasOwnProperty.call(patch, 'pluginStoreSources')) {
     updateDirty(
       'pluginStoreSources',
@@ -1455,6 +1462,7 @@ function parseVisualValuesFromYaml(yamlContent: string): VisualConfigValues {
 
     authDir: typeof v8Oauth?.['auth-dir'] === 'string' ? v8Oauth?.['auth-dir'] : '',
     apiKeysText: parseApiKeysText(asRecord(parsed.access)?.['api-keys']),
+    apiKeyNames: parseApiKeyNames(asRecord(parsed.access)?.['api-key-names']),
     pluginsEnabled: Boolean(plugins?.enabled),
     pluginStoreSources: parseStringList(plugins?.['store-sources']),
     pluginStoreAuth: parsePluginStoreAuthRules(plugins?.['store-auth']),
@@ -1735,6 +1743,13 @@ export function useVisualConfig() {
             doc.setIn(['access', 'api-keys'], apiKeys);
           } else if (docHas(doc, ['access', 'api-keys'])) {
             doc.deleteIn(['access', 'api-keys']);
+          }
+        }
+        if (dirtyFields.has('apiKeyNames')) {
+          if (Object.keys(values.apiKeyNames).length > 0) {
+            doc.setIn(['access', 'api-key-names'], values.apiKeyNames);
+          } else if (docHas(doc, ['access', 'api-key-names'])) {
+            doc.deleteIn(['access', 'api-key-names']);
           }
         }
 

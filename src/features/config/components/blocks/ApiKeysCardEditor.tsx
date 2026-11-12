@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { useAuthStore, useNotificationStore } from '@/stores';
-import { apiKeyNameFingerprint, readApiKeyNames, saveApiKeyName } from '../../apiKeyNames';
+import { apiKeyNameHash, namesOfKeys } from '../../apiKeyNames';
 import { copyToClipboard } from '@/utils/clipboard';
-import { makeClientId } from '@/types/visualConfig';
+import { makeClientId, type VisualConfigValues } from '@/types/visualConfig';
 import { generateSecureApiKey } from '@/utils/apiKey';
 import { maskApiKey } from '@/utils/format';
 import { isValidApiKeyCharset } from '@/utils/validation';
@@ -13,38 +13,30 @@ import { ApiKeyStrengthMeter } from './ApiKeyStrengthMeter';
 import styles from './Blocks.module.scss';
 
 interface ApiKeysCardEditorProps {
-  value: string;
+  values: VisualConfigValues;
   disabled?: boolean;
-  onChange: (nextValue: string) => void;
+  onChange: (patch: Pick<VisualConfigValues, 'apiKeysText' | 'apiKeyNames'>) => void;
 }
 
 export const ApiKeysCardEditor = memo(function ApiKeysCardEditor(props: ApiKeysCardEditorProps) {
   const apiBase = useAuthStore((state) => state.apiBase);
-  return <ScopedApiKeysCardEditor key={apiBase} {...props} apiBase={apiBase} />;
+  return <ScopedApiKeysCardEditor key={apiBase} {...props} />;
 });
 
-function ScopedApiKeysCardEditor({
-  value,
-  disabled,
-  onChange,
-  apiBase,
-}: ApiKeysCardEditorProps & { apiBase: string }) {
-  const [names, setNames] = useState(() => readApiKeyNames(apiBase));
+function ScopedApiKeysCardEditor({ values, disabled, onChange }: ApiKeysCardEditorProps) {
   const [nameValue, setNameValue] = useState('');
   const { t } = useTranslation();
   const showNotification = useNotificationStore((state) => state.showNotification);
+  const names = values.apiKeyNames;
   const apiKeys = useMemo(
     () =>
-      value
+      values.apiKeysText
         .split('\n')
         .map((key) => key.trim())
         .filter(Boolean),
-    [value]
+    [values.apiKeysText]
   );
-  const nameFingerprints = useMemo(
-    () => apiKeys.map((key) => apiKeyNameFingerprint(apiBase, key)),
-    [apiBase, apiKeys]
-  );
+  const nameHashes = useMemo(() => apiKeys.map(apiKeyNameHash), [apiKeys]);
   const [apiKeyIds, setApiKeyIds] = useState(() => apiKeys.map(() => makeClientId()));
   const renderApiKeyIds = useMemo(() => {
     if (apiKeyIds.length === apiKeys.length) return apiKeyIds;
@@ -75,9 +67,7 @@ function ScopedApiKeysCardEditor({
 
   const openEditModal = (apiKeyId: string) => {
     const editingIndex = renderApiKeyIds.findIndex((id) => id === apiKeyId);
-    const latestNames = readApiKeyNames(apiBase);
-    setNames(latestNames);
-    setNameValue(latestNames[nameFingerprints[editingIndex]] ?? '');
+    setNameValue(names[nameHashes[editingIndex]] ?? '');
     setEditingApiKeyId(apiKeyId);
     setInputValue(apiKeys[editingIndex] ?? '');
     setFormError('');
@@ -91,15 +81,18 @@ function ScopedApiKeysCardEditor({
     setFormError('');
   };
 
-  const updateApiKeys = (nextKeys: string[]) => {
-    onChange(nextKeys.join('\n'));
+  const updateApiKeys = (nextKeys: string[], nextNames: VisualConfigValues['apiKeyNames']) => {
+    onChange({ apiKeysText: nextKeys.join('\n'), apiKeyNames: namesOfKeys(nextNames, nextKeys) });
   };
 
   const handleDelete = (apiKeyId: string) => {
     const index = renderApiKeyIds.findIndex((id) => id === apiKeyId);
     if (index < 0) return;
     setApiKeyIds(renderApiKeyIds.filter((id) => id !== apiKeyId));
-    updateApiKeys(apiKeys.filter((_, i) => i !== index));
+    updateApiKeys(
+      apiKeys.filter((_, i) => i !== index),
+      names
+    );
   };
 
   const handleSave = () => {
@@ -120,16 +113,11 @@ function ScopedApiKeysCardEditor({
       editingApiKeyId === null
         ? [...apiKeys, trimmed]
         : apiKeys.map((key, idx) => (idx === editingIndex ? trimmed : key));
-    if (!saveApiKeyName(apiBase, trimmed, nameValue)) {
-      setFormError(t('config_management.visual.api_keys.name_save_error'));
-      return;
-    }
-    setNames(readApiKeyNames(apiBase));
-    // Retain old fingerprints: configuration edits can still be discarded or fail to save.
+    const nextNames = { ...names, [apiKeyNameHash(trimmed)]: nameValue.trim() };
     if (editingApiKeyId === null) {
       setApiKeyIds([...renderApiKeyIds, makeClientId()]);
     }
-    if (nextKeys.join('\n') !== apiKeys.join('\n')) updateApiKeys(nextKeys);
+    updateApiKeys(nextKeys, nextNames);
     closeModal();
   };
 
@@ -169,8 +157,7 @@ function ScopedApiKeysCardEditor({
               <span className={styles.apiKeyIndex}>#{index + 1}</span>
               <span className={styles.apiKeyMeta}>
                 <span className={styles.apiKeyName}>
-                  {names[nameFingerprints[index]] ??
-                    t('config_management.visual.api_keys.input_label')}
+                  {names[nameHashes[index]] ?? t('config_management.visual.api_keys.input_label')}
                 </span>
                 <span className={styles.apiKeyValue}>{maskApiKey(String(key || ''))}</span>
               </span>
